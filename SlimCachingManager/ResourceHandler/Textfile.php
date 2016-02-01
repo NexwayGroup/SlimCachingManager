@@ -54,10 +54,10 @@ class Textfile implements IResourceHandler
     public function _readData()
     {
 
-        if (!file_exists($this->_file)) {
-            file_put_contents($this->_file, 'a:0:{}');
+        if (!file_exists($this->getCacheFile())) {
+            file_put_contents($this->getCacheFile(), 'a:0:{}');
         }
-        $this->_data = unserialize(file_get_contents($this->_file));
+        $this->_data = unserialize(file_get_contents($this->getCacheFile()));
 
     }
 
@@ -96,7 +96,7 @@ class Textfile implements IResourceHandler
                 'last_modified' => date('Y-m-d H:i:s', time())
             );
 
-            file_put_contents($this->_file, serialize($this->_data));
+            file_put_contents($this->getCacheFile(), serialize($this->_data));
 
             $this->_readData();
 
@@ -121,7 +121,7 @@ class Textfile implements IResourceHandler
             }
         }
 
-        file_put_contents($this->_file, serialize($this->_data));
+        file_put_contents($this->getCacheFile(), serialize($this->_data));
 
     }
 
@@ -143,5 +143,15 @@ class Textfile implements IResourceHandler
         $obj->setExpiryDate($res['expiry_date']);
         $obj->setLastModified($res['last_modified']);
         return $obj;
+    }
+
+    /**
+     * Returns path to the cache file
+     *
+     * @return string path to the cache file
+     */
+    private function getCacheFile()
+    {
+        return sys_get_temp_dir().'/'. $this->_file;
     }
 }
